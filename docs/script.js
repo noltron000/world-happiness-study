@@ -1,5 +1,9 @@
-// Got json loader from the following source:
-// https://codepen.io/KryptoniteDove/post/load-json-file-locally-using-pure-javascript
+/**
+ * Load JSON file using XMLHttpRequest.
+ * https://codepen.io/KryptoniteDove/post/load-json-file-locally-using-pure-javascript
+ * @param {string} path - Path to JSON file
+ * @param {function} callback - Callback function with JSON string
+ */
 const loadJSON = (path, callback) => {
 	const xobj = new XMLHttpRequest()
 	xobj.overrideMimeType('application/json')
@@ -15,9 +19,10 @@ const loadJSON = (path, callback) => {
 	xobj.send(null)
 }
 
-// Learned to apply optional parameters from these sources:
-// https://simonsmith.io/destructuring-objects-as-function-parameters-in-es6
-// https://stackoverflow.com/questions/11796093/is-there-a-way-to-provide-named-parameters-in-a-function-call-in-javascript
+/**
+ * Populate DOM elements with data.
+ * @param {object} params - Object containing yearText and numCountriesText
+ */
 const populateEls = ({
 	yearText = '',
 	numCountriesText = '',
@@ -28,6 +33,10 @@ const populateEls = ({
 	elNumCountries.textContent = numCountriesText
 }
 
+/**
+ * Create the main overall happiness table with all countries.
+ * @param {array} data - Array of country data objects
+ */
 const createOverallHappinessTable = (data) => {
 	// Get the section element.
 	const elSection = document.getElementById('all-countries')
@@ -44,6 +53,10 @@ const createOverallHappinessTable = (data) => {
 	elSection.appendChild(elTable)
 }
 
+/**
+ * Create tables for top 10 countries by various categories.
+ * @param {array} data - Array of country data objects
+ */
 const createTopTenTables = (data) => {
 	// Get the section element.
 	const elSection = document.getElementById('top-countries')
@@ -72,6 +85,14 @@ const createTopTenTables = (data) => {
 	})
 }
 
+/**
+ * Create a complete table with caption and header/body.
+ * @param {array} columns - Array of column names (including 'Overall rank' if sorting by it)
+ * @param {array} data - Array of data objects
+ * @param {string} caption - Table caption text
+ * @param {object} options - Table configuration options
+ * @returns {HTMLElement} table element
+ */
 const createTable = (
 	columns,
 	data,
@@ -111,6 +132,11 @@ const createTable = (
 	return elTable
 }
 
+/**
+ * Create table header with column names.
+ * @param {array} categories - Array of column names
+ * @returns {HTMLElement} thead element
+ */
 const createTableHead = (categories) => {
 	// Entry is a dictionary item.
 	// Categories is an array.
@@ -131,8 +157,12 @@ const createTableHead = (categories) => {
 	return elTableHead
 }
 
-// Data is the data list from json.
-// Categories is an array.
+/**
+ * Create table body with all rows.
+ * @param {array} categories - Array of column names
+ * @param {array} data - Array of data objects
+ * @returns {HTMLElement} tbody element
+ */
 const createTableBody = (categories, data) => {
 	// Create the empty body.
 	const elTableBody = document.createElement('tbody')
@@ -148,8 +178,12 @@ const createTableBody = (categories, data) => {
 	return elTableBody
 }
 
-// Entry is a dictionary item.
-// Categories is an array.
+/**
+ * Create a single table row.
+ * @param {object} entry - Data object for the row
+ * @param {array} categories - Array of column names
+ * @returns {HTMLElement} tr element
+ */
 const createTableRow = (entry, categories) => {
 	const elTableRow = document.createElement('tr')
 	categories.forEach((category) => {
@@ -168,9 +202,13 @@ const createTableRow = (entry, categories) => {
 	return elTableRow
 }
 
-// Returns a set of unique countries.
+
+/**
+ * Get unique countries from data.
+ * @param {array} data - Array of country data objects
+ * @returns {Set} Set of unique country names
+ */
 const getUniqueCountries = (data) => {
-	// Start by initializing aforementioned set.
 	const countries = new Set()
 	// Reducer gets ran recursively for each entry
 	// in the data array, which is called with reduce.
@@ -184,9 +222,12 @@ const getUniqueCountries = (data) => {
 	return countries
 }
 
-// Returns a set of unique categories.
+/**
+ * Get unique categories from data.
+ * @param {array} data - Array of country data objects
+ * @returns {Set} Set of unique category keys
+ */
 const getUniqueCategories = (data) => {
-	// Start by initializing aforementioned set.
 	const categories = new Set()
 	// Reducer gets ran recursively for each entry
 	// in the data array, which is called with reduce.
@@ -203,6 +244,10 @@ const getUniqueCategories = (data) => {
 	return categories
 }
 
+/**
+ * Load and process happiness data for a specific year.
+ * @param {string} year - Year to load data for (e.g., '2019')
+ */
 const StudyHappiness = (year) => {
 	// Find file from input year.
 	const file = `./data/${year}.json`
@@ -225,5 +270,5 @@ const StudyHappiness = (year) => {
 	})
 }
 
-// testing HappinessStudy
+// Run the application when the page loads.
 StudyHappiness('2019')
