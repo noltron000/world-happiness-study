@@ -28,19 +28,15 @@ const populateEls = ({
 	elNumCountries.textContent = numCountriesText
 }
 
-const createOverallHappinessTable = (data, sortBy = 'Overall rank') => {
+const createOverallHappinessTable = (data) => {
 	// Get the section element.
 	const elSection = document.getElementById('all-countries')
 
-	// Create a list of unique categories, and obtain a list of
-	// country data sorted by the given column (default overall rank).
+	// Create a list of unique categories.
 	const columns = [...getUniqueCategories(data)]
-	const rows = data
-		.filter(entry => sortBy in entry)
-		.sort((left, right) => left[sortBy] - right[sortBy])
 
-	// Create the table and insert it into the section.
-	const elTable = createTable(columns, rows, 'All Countries')
+	// Create the table, sorted by overall rank by default, and insert it.
+	const elTable = createTable(columns, data, 'All Countries')
 	elTable.id = 'overall-happiness-table'
 	elSection.appendChild(elTable)
 }
@@ -58,30 +54,50 @@ const createTopTenTables = (data) => {
 	]
 
 	categories.forEach((category) => {
-		// Create a list of unique categories, and obtain a list of
-		// country data sorted by the given column.
+		// Select the columns for this category.
 		const columns = ['Country or region', category]
-		const rows = data
-			.filter(entry => Number.isFinite(entry[category]))
-			.sort((left, right) => right[category] - left[category])
-			.slice(0, 10)
 
-		// Create the table and insert it into the section.
-		const elTable = createTable(columns, rows, category)
+		// Create the table with the top ten scores and insert it into the section.
+		const elTable = createTable(columns, data, category, {
+			sortColumn: category,
+			limit: 10,
+		})
 		const baseId = category.toLowerCase().replace(/\s+/g, '-')
 		elTable.id = `${baseId}-table`
 		elSection.appendChild(elTable)
 	})
 }
 
-const createTable = (columns, rows, caption) => {
+const createTable = (
+	columns,
+	data,
+	caption,
+	{
+		hiddenColumns = [],
+		limit = Infinity,
+		sortColumn = 'Overall rank',
+		sortMethod = (a, b) => (a - b),
+	},
+) => {
+	// Build comparator from sortColumn and sortMethod
+	const sortComparator = (a, b) => {
+		const aVal = a[sortColumn]
+		const bVal = b[sortColumn]
+		return sortMethod(aVal, bVal)
+	}
+
+	// Sort the data using the comparator.
+	const rows = [...data].sort(sortComparator)
+	const limitedRows = rows.slice(0, limit)
+
 	// Create the table and caption elements.
 	const elTable = document.createElement('table')
 	const elCaption = document.createElement('caption')
 
 	// Fill in the rest of the table.
-	const elTableHead = createTableHead(columns)
-	const elTableBody = createTableBody(columns, rows)
+	const visibleColumns = columns.filter(column => !hiddenColumns.includes(column))
+	const elTableHead = createTableHead(visibleColumns)
+	const elTableBody = createTableBody(visibleColumns, limitedRows)
 
 	// Add items to the table.
 	elCaption.textContent = caption
