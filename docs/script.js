@@ -54,6 +54,39 @@ const createFullTable = (data, sortBy = 'Overall rank') => {
 	elSection.appendChild(elTable)
 }
 
+const createTopTenTables = (data) => {
+	const categories = [
+		'GDP per capita',
+		'Social support',
+		'Healthy life expectancy',
+		'Generosity',
+	]
+	const elSection = document.getElementById('top-countries')
+
+	categories.forEach((category) => {
+		// Sort and filter the top ten countries per category.
+		const rows = data
+			.filter(entry => Number.isFinite(entry[category]))
+			.sort((left, right) => right[category] - left[category])
+			.slice(0, 10)
+		const columns = ['Country or region', category]
+
+		// Create the table and caption elements.
+		const elTable = document.createElement('table')
+		const elCaption = document.createElement('caption')
+
+		// Fill in the rest of the table.
+		const elTableHead = createTableHead(columns)
+		const elTableBody = createTableBody(columns, rows)
+
+		elCaption.textContent = category
+		elTable.appendChild(elCaption)
+		elTable.appendChild(elTableHead)
+		elTable.appendChild(elTableBody)
+		elSection.appendChild(elTable)
+	})
+}
+
 const createTableHead = (categories) => {
 	// Entry is a dictionary item.
 	// Categories is an array.
