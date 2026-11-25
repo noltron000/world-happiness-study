@@ -29,41 +29,47 @@ const populateEls = ({
 }
 
 const createOverallHappinessTable = (data, sortBy = 'Overall rank') => {
-	// filter data by category
+	// Get the section element.
+	const elSection = document.getElementById('all-countries')
+
+	// Create a list of unique categories, and obtain a list of
+	// country data sorted by the given column (default overall rank).
+	const columns = [...getUniqueCategories(data)]
 	const rows = data
 		.filter(entry => sortBy in entry)
 		.sort((left, right) => left[sortBy] - right[sortBy])
-	// .slice(0, 10) // I want to show everything off :O
 
-	// create a list of unique categories
-	const columns = [...getUniqueCategories(rows)]
-	const elSection = document.getElementById('all-countries')
-
+	// Create the table and insert it into the section.
 	const elTable = createTable(columns, rows, 'All Countries')
-	elTable.id = 'data-table'
+	elTable.id = 'overall-happiness-table'
 	elSection.appendChild(elTable)
 }
 
 const createTopTenTables = (data) => {
+	// Get the section element.
+	const elSection = document.getElementById('top-countries')
+
+	// Determine catagories to rank countries by.
 	const categories = [
 		'GDP per capita',
 		'Social support',
 		'Healthy life expectancy',
 		'Generosity',
 	]
-	const elSection = document.getElementById('top-countries')
 
 	categories.forEach((category) => {
-		// Sort and filter the top ten countries per category.
+		// Create a list of unique categories, and obtain a list of
+		// country data sorted by the given column.
+		const columns = ['Country or region', category]
 		const rows = data
 			.filter(entry => Number.isFinite(entry[category]))
 			.sort((left, right) => right[category] - left[category])
 			.slice(0, 10)
 
-		const columns = ['Country or region', category]
-
 		// Create the table and insert it into the section.
 		const elTable = createTable(columns, rows, category)
+		const baseId = category.toLowerCase().replace(/\s+/g, '-')
+		elTable.id = `${baseId}-table`
 		elSection.appendChild(elTable)
 	})
 }
