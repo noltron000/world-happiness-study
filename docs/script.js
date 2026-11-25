@@ -36,7 +36,10 @@ const createOverallHappinessTable = (data) => {
 	const columns = [...getUniqueCategories(data)]
 
 	// Create the table, sorted by overall rank by default, and insert it.
-	const elTable = createTable(columns, data, 'All Countries')
+	const elTable = createTable(columns, data, 'All Countries', {
+		sortColumn: 'Overall rank',
+		sortMethod: (a, b) => a - b,
+	})
 	elTable.id = 'overall-happiness-table'
 	elSection.appendChild(elTable)
 }
@@ -60,6 +63,7 @@ const createTopTenTables = (data) => {
 		// Create the table with the top ten scores and insert it into the section.
 		const elTable = createTable(columns, data, category, {
 			sortColumn: category,
+			sortMethod: (a, b) => (b - a),
 			limit: 10,
 		})
 		const baseId = category.toLowerCase().replace(/\s+/g, '-')
