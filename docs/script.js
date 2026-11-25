@@ -28,29 +28,19 @@ const populateEls = ({
 	elNumCountries.textContent = numCountriesText
 }
 
-const createFullTable = (data, sortBy = 'Overall rank') => {
+const createOverallHappinessTable = (data, sortBy = 'Overall rank') => {
 	// filter data by category
 	const rows = data
 		.filter(entry => sortBy in entry)
-		.sort((left, right) => right[sortBy] - left[sortBy])
+		.sort((left, right) => left[sortBy] - right[sortBy])
 	// .slice(0, 10) // I want to show everything off :O
 
 	// create a list of unique categories
 	const columns = [...getUniqueCategories(rows)]
 	const elSection = document.getElementById('all-countries')
 
-	// get items
-	const elTable = document.createElement('table')
-	const elCaption = document.createElement('caption')
-	const elTableHead = createTableHead(columns)
-	const elTableBody = createTableBody(columns, rows)
-
-	// add items to table
+	const elTable = createTable(columns, rows, 'All Countries')
 	elTable.id = 'data-table'
-	elCaption.textContent = 'All Countries'
-	elTable.appendChild(elCaption)
-	elTable.appendChild(elTableHead)
-	elTable.appendChild(elTableBody)
 	elSection.appendChild(elTable)
 }
 
@@ -69,22 +59,30 @@ const createTopTenTables = (data) => {
 			.filter(entry => Number.isFinite(entry[category]))
 			.sort((left, right) => right[category] - left[category])
 			.slice(0, 10)
+
 		const columns = ['Country or region', category]
 
-		// Create the table and caption elements.
-		const elTable = document.createElement('table')
-		const elCaption = document.createElement('caption')
-
-		// Fill in the rest of the table.
-		const elTableHead = createTableHead(columns)
-		const elTableBody = createTableBody(columns, rows)
-
-		elCaption.textContent = category
-		elTable.appendChild(elCaption)
-		elTable.appendChild(elTableHead)
-		elTable.appendChild(elTableBody)
+		// Create the table and insert it into the section.
+		const elTable = createTable(columns, rows, category)
 		elSection.appendChild(elTable)
 	})
+}
+
+const createTable = (columns, rows, caption) => {
+	// Create the table and caption elements.
+	const elTable = document.createElement('table')
+	const elCaption = document.createElement('caption')
+
+	// Fill in the rest of the table.
+	const elTableHead = createTableHead(columns)
+	const elTableBody = createTableBody(columns, rows)
+
+	// Add items to the table.
+	elCaption.textContent = caption
+	elTable.appendChild(elCaption)
+	elTable.appendChild(elTableHead)
+	elTable.appendChild(elTableBody)
+	return elTable
 }
 
 const createTableHead = (categories) => {
@@ -197,7 +195,7 @@ const StudyHappiness = (year) => {
 		})
 
 		createTopTenTables(data)
-		createFullTable(data)
+		createOverallHappinessTable(data)
 	})
 }
 
