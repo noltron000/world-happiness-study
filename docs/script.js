@@ -30,22 +30,28 @@ const populateEls = ({
 
 const createFullTable = (data, sortBy = 'Overall rank') => {
 	// filter data by category
-	data = data
-	.filter(entry => sortBy in entry)
-	.sort((left, right) => right[sortBy] - left[sortBy])
+	const rows = data
+		.filter(entry => sortBy in entry)
+		.sort((left, right) => right[sortBy] - left[sortBy])
 	// .slice(0, 10) // I want to show everything off :O
 
 	// create a list of unique categories
-	const categories = [...getUniqueCategories(data)]
+	const columns = [...getUniqueCategories(rows)]
+	const elSection = document.getElementById('all-countries')
 
 	// get items
-	const elTableHead = createTableHead(categories)
-	const elTableBody = createTableBody(categories, data)
-	const elTable = document.getElementById('data-table')
+	const elTable = document.createElement('table')
+	const elCaption = document.createElement('caption')
+	const elTableHead = createTableHead(columns)
+	const elTableBody = createTableBody(columns, rows)
 
 	// add items to table
+	elTable.id = 'data-table'
+	elCaption.textContent = 'All Countries'
+	elTable.appendChild(elCaption)
 	elTable.appendChild(elTableHead)
 	elTable.appendChild(elTableBody)
+	elSection.appendChild(elTable)
 }
 
 const createTableHead = (categories) => {
@@ -157,6 +163,7 @@ const StudyHappiness = (year) => {
 			'numCountriesText': countries.size,
 		})
 
+		createTopTenTables(data)
 		createFullTable(data)
 	})
 }
